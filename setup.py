@@ -11,7 +11,7 @@ setup(
     author_email="ray@raymcbride.com",
     description=("Simple portfolio app"),
     license="BSD",
-    url="https://bitbucket.org/raymcbride/django-portfolio",
+    url="https://github.com/raymcbride/django-portfolio",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 1 - Planning",
