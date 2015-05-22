@@ -1,3 +1,1 @@
-# django-portfolio
-
-A simple portfolio app
+#django-portfolio
