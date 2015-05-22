@@ -11,7 +11,7 @@ from portfolio.factories import (CategoryFactory, FileArtifactFactory,
                                  TextArtifactFactory)
 from portfolio.models import (Category, FileArtifact, ImageArtifact, Project,
                               TextArtifact)
-from portfolio.templatetags.portfolio import get_artifact_list
+from portfolio.templatetags.portfolio_tags import get_artifact_list
 
 
 class PortfolioModelsTests(TestCase):
