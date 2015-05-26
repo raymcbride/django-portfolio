@@ -1,0 +1,19 @@
+language: python
+python:
+    - "2.7"
+env:
+    - DJANGO="django>=1.4,<1.5"
+    - DJANGO="django>=1.5,<1.6"
+    - DJANGO="django>=1.6,<1.7"
+    - DJANGO="django>=1.7,<1.8"
+    - DJANGO="django>=1.8"
+install:
+    - "pip install django${DJANGO}"
+before_script:
+    - "pip install python-coveralls coverage"
+script:
+    - "coverage run --branch runtests.py"
+after_success:
+    - "coveralls"
+notifications:
+    email: false

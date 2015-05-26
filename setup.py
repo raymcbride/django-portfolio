@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pip
+
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
-requirements = [str(r.req) for r in parse_requirements('requirements.txt')]
+requirements = [str(r.req) for r in
+                parse_requirements('requirements.txt',
+                                   session=pip.download.PipSession())]
 
 setup(
     name='django-portfolio',

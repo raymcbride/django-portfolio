@@ -102,7 +102,7 @@ class PortfolioViewsTests(TestCase):
 
 class PortfolioTemplateTagsTests(TestCase):
 
-    TEMPLATE = Template('{% load portfolio %} \
+    TEMPLATE = Template('{% load portfolio_tags %} \
                        {{"*This is the description*"|convert_markdown|safe }}')
 
     def setUp(self):

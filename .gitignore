@@ -9,7 +9,14 @@
 .project
 .pydevproject
 /*.egg
+/.eggs
+/.tox
 /dist
+/bin
+/include
+/lib
+/local
 build
 tags
 pip-log.txt
+pip-selfcheck.json
