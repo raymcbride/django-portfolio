@@ -1,2 +1,3 @@
 Markdown
+pillow
 factory-boy
