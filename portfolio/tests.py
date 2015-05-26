@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.template import Context, Template
 from django.test import TestCase
+from django.contrib.admin.sites import AdminSite
 
 from portfolio.admin import ImageArtifactInline
 from portfolio.factories import (CategoryFactory, FileArtifactFactory,
@@ -150,7 +151,7 @@ class PortfolioAdminTests(TestCase):
         TextArtifactFactory(project=project)
 
     def test_image_thumb(self):
-        image_artifact_inline = ImageArtifactInline(ImageArtifact, 1)
+        image_artifact_inline = ImageArtifactInline(ImageArtifact, AdminSite())
         image_artifact = ImageArtifact.objects.get(slug='an-image')
         self.assertHTMLEqual(ImageArtifactInline.image_thumb(
                              image_artifact_inline, image_artifact),
