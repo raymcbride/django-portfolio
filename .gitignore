@@ -16,6 +16,7 @@
 /include
 /lib
 /local
+test_project/media/
 build
 tags
 pip-log.txt
