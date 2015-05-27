@@ -1,6 +1,10 @@
 #django-portfolio
 
-A simple Django portfolio app.
+A simple Django portfolio app which allows you to create categorised projects. Each project can contain a series of resources called artifacts related to that project. Artifacts take the follow forms:
+
+* image artifacts
+* file artifacts
+* text artifacts
 
 [![Build
 Status](https://travis-ci.org/raymcbride/django-portfolio.svg?branch=master)](https://travis-ci.org/raymcbride/django-portfolio)
@@ -32,3 +36,36 @@ Include URLs in your project URLs:
 ##Templates
 
 The following templates are required by django-portfolio, so you'll need to create them:
+
+* portfolio/project_list.html - the template which renders the list of your projects
+* portfolio/project_detail.html - the template which renders a specific project detail
+* portfolio/artifact_list.html - the template which renders the list of a project artifacts
+* portfolio/artifact_detail.html - the template which renders a specific artifact detail
+
+##Template Tags and Filters
+
+To use these helpers load portfolio_tags into your template:
+
+    {% load portfolio_tags %}
+
+###get_artifact_list
+
+This tag takes the context and an  artifact_type string and returns a list
+of published artifacts of that type for a specific project. The
+artifact_type string can be one of the follow:
+
+* "image"
+* "file"
+* "text"
+
+####Usage
+
+    {% get_artifact_list "image" as image_artifact_list %}
+
+###convert_markdown
+
+This filter converts a field containing markdown to HTML.
+
+####Usage
+ 
+    {{ project.description|convert_markdown|safe }}
