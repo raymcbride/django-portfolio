@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.core.urlresolvers import reverse
 
 MARKDOWN_HELP_TEXT = '' \
     '<a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a> ' \
@@ -19,6 +20,14 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse(
+            'category_detail',
+            kwargs={
+                'category_slug': self.slug
+            }
+        )
+
 
 class Project(models.Model):
     title = models.CharField(max_length=200)
@@ -34,6 +43,15 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse(
+            'project_detail',
+            kwargs={
+                'category_slug': self.category.slug,
+                'project_slug': self.slug
+            }
+        )
+
 
 class Artifact(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
@@ -48,6 +66,16 @@ class Artifact(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse(
+            'artifact_detail',
+            kwargs={
+                'category_slug': self.project.category.slug,
+                'project_slug': self.project.slug,
+                'artifact_slug': self.slug
+            }
+        )
 
 
 class FileArtifact(Artifact):
