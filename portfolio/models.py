@@ -25,7 +25,7 @@ class Project(models.Model):
     slug = models.SlugField(max_length=50, unique=True)
     description = models.TextField(help_text=MARKDOWN_HELP_TEXT)
     published = models.BooleanField('Published', default=False)
-    date_completed = models.DateField(blank=True)
+    date_completed = models.DateField(null=True, blank=True)
     category = models.ForeignKey(Category, related_name='projects')
 
     class Meta:
