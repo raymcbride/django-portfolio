@@ -54,7 +54,7 @@ class ImageArtifactFactory(factory.django.DjangoModelFactory):
 
 class TextArtifactFactory(factory.django.DjangoModelFactory):
     title = 'Text'
-    slug = 'text'
+    slug = 'some-text'
     order = 0
     description = 'Text Description'
     published = True

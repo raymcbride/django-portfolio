@@ -24,9 +24,28 @@ class PortfolioModelsTests(TestCase):
         ImageArtifactFactory(project=project)
         TextArtifactFactory(project=project)
 
-    def test___str__(self):
+    def test_category___str__(self):
+        category = Category.objects.get(slug='my-websites')
+        self.assertEqual(str(category), category.title)
+
+    def test_project___str__(self):
         project = Project.objects.get(slug='my-first-website')
         self.assertEqual(str(project), project.title)
+
+    def test_artifact___str__(self):
+        file = FileArtifact.objects.get(slug='a-file')
+        self.assertEqual(str(file), file.title)
+
+    def test_project_get_absolue_url(self):
+        project = Project.objects.get(slug='my-first-website')
+        self.assertEqual(project.get_absolute_url(), '/portfolio/%s/%s/' %
+                         (project.category.slug, project.slug))
+
+    def test_artifact_get_absolue_url(self):
+        text = TextArtifact.objects.get(slug='some-text')
+        self.assertEqual(text.get_absolute_url(), '/portfolio/%s/%s/pages/%s/'
+                         % (text.project.category.slug, text.project.slug,
+                            text.slug))
 
 
 class PortfolioViewsTests(TestCase):
@@ -118,7 +137,7 @@ class PortfolioTemplateTagsTests(TestCase):
         project = Project.objects.get(slug='my-first-website')
         image_artifact = ImageArtifact.objects.get(slug='an-image')
         file_artifact = FileArtifact.objects.get(slug='a-file')
-        text_artifact = TextArtifact.objects.get(slug='text')
+        text_artifact = TextArtifact.objects.get(slug='some-text')
         artifact_list = get_artifact_list(Context({'project': project}))
         self.assertEqual(len(artifact_list), 3)
         artifact_list = get_artifact_list(Context({'project': project}),

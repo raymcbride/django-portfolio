@@ -5,8 +5,8 @@ from portfolio.views import (ArtifactDetail, ArtifactList, ProjectDetail,
 
 urlpatterns = patterns(
     '',
-    url(r'^(?P<category_slug>[-\w]+)/(?P<project_slug>[-\w]+)/pages/ \
-        (?P<artifact_slug>[-\w]+)/$', ArtifactDetail.as_view(),
+    url(r'^(?P<category_slug>[-\w]+)/(?P<project_slug>[-\w]+)/pages/'
+        '(?P<artifact_slug>[-\w]+)/$', ArtifactDetail.as_view(),
         name='artifact_detail'),
     url(r'^(?P<category_slug>[-\w]+)/(?P<project_slug>[-\w]+)/pages/$',
         ArtifactList.as_view(), name='artifact_list'),
