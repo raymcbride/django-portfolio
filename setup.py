@@ -12,7 +12,7 @@ requirements = [str(r.req) for r in
 
 setup(
     name='django-portfolio',
-    version='0.0.1',
+    version='0.0.2',
     author='Ray McBride',
     author_email='ray@raymcbride.com',
     description='Simple portfolio app',
