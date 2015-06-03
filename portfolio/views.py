@@ -13,7 +13,7 @@ from portfolio.models import Artifact, Category, Project
 class CategoryList(ListView):
 
     context_object_name = 'category_list'
-    template_name = 'category_list.html'
+    template_name = 'portfolio/category_list.html'
 
     def get_queryset(self):
         return Category.objects.all()
@@ -29,7 +29,7 @@ class CategoryList(ListView):
 class CategoryDetail(DetailView):
 
     context_object_name = 'category'
-    template_name = 'category_detail.html'
+    template_name = 'portfolio/category_detail.html'
 
     def get_object(self):
         return get_object_or_404(Category, slug=self.kwargs.get(
@@ -47,7 +47,7 @@ class CategoryDetail(DetailView):
 class ProjectList(ListView):
 
     context_object_name = 'project_list'
-    template_name = 'project_list.html'
+    template_name = 'portfolio/project_list.html'
 
     def get_queryset(self):
         self.category = get_object_or_404(Category, slug=self.kwargs.get(
@@ -66,7 +66,7 @@ class ProjectList(ListView):
 class ProjectDetail(DetailView):
 
     context_object_name = 'project'
-    template_name = 'project_detail.html'
+    template_name = 'portfolio/project_detail.html'
 
     def get_object(self):
         self.category = get_object_or_404(Category, slug=self.kwargs.get(
@@ -87,7 +87,7 @@ class ProjectDetail(DetailView):
 class ArtifactList(ListView):
 
     context_object_name = 'artifact_list'
-    template_name = 'artifact_list.html'
+    template_name = 'portfolio/artifact_list.html'
 
     def get_queryset(self):
         self.category = get_object_or_404(Category, slug=self.kwargs.get(
@@ -109,7 +109,7 @@ class ArtifactList(ListView):
 class ArtifactDetail(DetailView):
 
     context_object_name = 'artifact'
-    template_name = 'artifact_detail.html'
+    template_name = 'portfolio/artifact_detail.html'
 
     def get_object(self):
         self.category = get_object_or_404(Category, slug=self.kwargs.get(
