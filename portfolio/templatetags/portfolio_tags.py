@@ -10,19 +10,19 @@ from portfolio.models import (Artifact, FileArtifact, ImageArtifact,
 register = template.Library()
 
 
-@register.assignment_tag(takes_context=True)
-def get_artifact_list(context, artifact_type=""):
+@register.assignment_tag()
+def get_artifact_list(project, artifact_type=""):
     if artifact_type == "":
-        return Artifact.objects.filter(project=context['project']) \
+        return Artifact.objects.filter(project=project) \
             .filter(published=True)
     elif artifact_type == "file":
-        return FileArtifact.objects.filter(project=context['project']) \
+        return FileArtifact.objects.filter(project=project) \
             .filter(published=True)
     elif artifact_type == "image":
-        return ImageArtifact.objects.filter(project=context['project']) \
+        return ImageArtifact.objects.filter(project=project) \
             .filter(published=True)
     elif artifact_type == "text":
-        return TextArtifact.objects.filter(project=context['project']) \
+        return TextArtifact.objects.filter(project=project) \
             .filter(published=True)
     else:
         return []
