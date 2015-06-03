@@ -3,7 +3,10 @@ from __future__ import unicode_literals
 
 from django.core.urlresolvers import reverse
 from django.template import Context, Template
+from django.shortcuts import render
 from django.test import TestCase
+from django.test import RequestFactory
+from django.template import TemplateDoesNotExist
 from django.contrib.admin.sites import AdminSite
 
 from portfolio.admin import ImageArtifactInline
@@ -13,16 +16,20 @@ from portfolio.factories import (CategoryFactory, FileArtifactFactory,
 from portfolio.models import (Category, FileArtifact, ImageArtifact, Project,
                               TextArtifact)
 from portfolio.templatetags.portfolio_tags import get_artifact_list
+from portfolio.middleware import TemplateDoesNotExistMiddleware
 
 
-class PortfolioModelsTests(TestCase):
+class PortfolioTestCase(TestCase):
+
     def setUp(self):
-        super(PortfolioModelsTests, self).setUp()
         category = CategoryFactory()
         project = ProjectFactory(category=category)
         FileArtifactFactory(project=project)
         ImageArtifactFactory(project=project)
         TextArtifactFactory(project=project)
+
+
+class PortfolioModelsTests(PortfolioTestCase):
 
     def test_category___str__(self):
         category = Category.objects.get(slug='my-websites')
@@ -36,27 +43,40 @@ class PortfolioModelsTests(TestCase):
         file = FileArtifact.objects.get(slug='a-file')
         self.assertEqual(str(file), file.title)
 
+    def test_category_get_absolue_url(self):
+        category = Category.objects.get(slug='my-websites')
+        self.assertEqual(category.get_absolute_url(), '/portfolio/%s/'
+                         % (category.slug))
+
     def test_project_get_absolue_url(self):
         project = Project.objects.get(slug='my-first-website')
-        self.assertEqual(project.get_absolute_url(), '/portfolio/%s/%s/' %
-                         (project.category.slug, project.slug))
+        self.assertEqual(project.get_absolute_url(), '/portfolio/%s/projects/'
+                         '%s/' % (project.category.slug, project.slug))
 
     def test_artifact_get_absolue_url(self):
         text = TextArtifact.objects.get(slug='some-text')
-        self.assertEqual(text.get_absolute_url(), '/portfolio/%s/%s/pages/%s/'
-                         % (text.project.category.slug, text.project.slug,
-                            text.slug))
+        self.assertEqual(text.get_absolute_url(), '/portfolio/%s/projects/'
+                         '%s/pages/%s/' % (text.project.category.slug,
+                                           text.project.slug, text.slug))
 
 
-class PortfolioViewsTests(TestCase):
+class PortfolioViewsTests(PortfolioTestCase):
 
-    def setUp(self):
-        super(PortfolioViewsTests, self).setUp()
-        category = CategoryFactory()
-        project = ProjectFactory(category=category)
-        FileArtifactFactory(project=project)
-        ImageArtifactFactory(project=project)
-        TextArtifactFactory(project=project)
+    def test_category_list(self):
+        url = reverse('category_list')
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+
+    def test_category_detail(self):
+        category = Category.objects.get(slug='my-websites')
+        url = reverse('category_detail', kwargs={'category_slug':
+                                                 category.slug})
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        kwargs = {'category_slug': 'my-artwork'}
+        url = reverse('category_detail', kwargs=kwargs)
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 404)
 
     def test_project_list(self):
         category = Category.objects.get(slug='my-websites')
@@ -68,27 +88,34 @@ class PortfolioViewsTests(TestCase):
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 404)
 
-    def test_project_detail_and_artifact_list(self):
+    def test_project_detail(self):
         category = Category.objects.get(slug='my-websites')
         project = Project.objects.get(slug='my-first-website')
         kwargs = {'category_slug': category.slug, 'project_slug': project.slug}
         url = reverse('project_detail', kwargs=kwargs)
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
-        url = reverse('artifact_list', kwargs=kwargs)
-        resp = self.client.get(url)
-        self.assertEqual(resp.status_code, 200)
         kwargs = {'category_slug': 'my-artwork', 'project_slug': project.slug}
         url = reverse('project_detail', kwargs=kwargs)
-        resp = self.client.get(url)
-        self.assertEqual(resp.status_code, 404)
-        url = reverse('artifact_list', kwargs=kwargs)
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 404)
         kwargs = {'category_slug': category.slug, 'project_slug': 'my-project'}
         url = reverse('project_detail', kwargs=kwargs)
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 404)
+
+    def test_artifact_list(self):
+        category = Category.objects.get(slug='my-websites')
+        project = Project.objects.get(slug='my-first-website')
+        kwargs = {'category_slug': category.slug, 'project_slug': project.slug}
+        url = reverse('artifact_list', kwargs=kwargs)
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        kwargs = {'category_slug': 'my-artwork', 'project_slug': project.slug}
+        url = reverse('artifact_list', kwargs=kwargs)
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 404)
+        kwargs = {'category_slug': category.slug, 'project_slug': 'my-project'}
         url = reverse('artifact_list', kwargs=kwargs)
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 404)
@@ -120,18 +147,10 @@ class PortfolioViewsTests(TestCase):
         self.assertEqual(resp.status_code, 404)
 
 
-class PortfolioTemplateTagsTests(TestCase):
+class PortfolioTemplateTagsTests(PortfolioTestCase):
 
     TEMPLATE = Template('{% load portfolio_tags %} \
                        {{"*This is the description*"|convert_markdown|safe }}')
-
-    def setUp(self):
-        super(PortfolioTemplateTagsTests, self).setUp()
-        category = CategoryFactory()
-        project = ProjectFactory(category=category)
-        FileArtifactFactory(project=project)
-        ImageArtifactFactory(project=project)
-        TextArtifactFactory(project=project)
 
     def test_get_artifact_list(self):
         project = Project.objects.get(slug='my-first-website')
@@ -159,15 +178,7 @@ class PortfolioTemplateTagsTests(TestCase):
                              '<p><em>This is the description</em></p>')
 
 
-class PortfolioAdminTests(TestCase):
-
-    def setUp(self):
-        super(PortfolioAdminTests, self).setUp()
-        category = CategoryFactory()
-        project = ProjectFactory(category=category)
-        FileArtifactFactory(project=project)
-        ImageArtifactFactory(project=project)
-        TextArtifactFactory(project=project)
+class PortfolioAdminTests(PortfolioTestCase):
 
     def test_image_thumb(self):
         image_artifact_inline = ImageArtifactInline(ImageArtifact, AdminSite())
@@ -176,3 +187,21 @@ class PortfolioAdminTests(TestCase):
                              image_artifact_inline, image_artifact),
                              '<img src="%s" width="250" />' %
                              image_artifact.image.url)
+
+
+class PortfolioMiddlewareTests(PortfolioTestCase):
+
+    def setUp(self):
+        super(PortfolioMiddlewareTests, self).setUp()
+        self.tdnem = TemplateDoesNotExistMiddleware()
+
+    def test_template_does_not_exist(self):
+        url = reverse('category_list')
+        request = RequestFactory().get(url)
+        resp = render(request, 'portfolio/category_list.html')
+        self.assertEqual(resp.status_code, 200)
+        try:
+            resp = render(request, 'portfolio/foobar.html')
+        except TemplateDoesNotExist as exception:
+            resp = self.tdnem.process_exception(request, exception)
+        self.assertEqual(resp.status_code, 404)

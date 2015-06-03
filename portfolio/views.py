@@ -7,6 +7,23 @@ from django.views.generic import DetailView, ListView
 from portfolio.models import Artifact, Category, Project
 
 
+class CategoryList(ListView):
+
+    context_object_name = 'category_list'
+
+    def get_queryset(self):
+        return Category.objects.all()
+
+
+class CategoryDetail(DetailView):
+
+    context_object_name = 'category'
+
+    def get_object(self):
+        return get_object_or_404(Category, slug=self.kwargs.get(
+            'category_slug', ''))
+
+
 class ProjectList(ListView):
 
     context_object_name = 'project_list'
