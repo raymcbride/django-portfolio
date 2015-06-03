@@ -187,21 +187,3 @@ class PortfolioAdminTests(PortfolioTestCase):
                              image_artifact_inline, image_artifact),
                              '<img src="%s" width="250" />' %
                              image_artifact.image.url)
-
-
-class PortfolioMiddlewareTests(PortfolioTestCase):
-
-    def setUp(self):
-        super(PortfolioMiddlewareTests, self).setUp()
-        self.tdnem = TemplateDoesNotExistMiddleware()
-
-    def test_template_does_not_exist(self):
-        url = reverse('category_list')
-        request = RequestFactory().get(url)
-        resp = render(request, 'portfolio/category_list.html')
-        self.assertEqual(resp.status_code, 200)
-        try:
-            resp = render(request, 'portfolio/foobar.html')
-        except TemplateDoesNotExist as exception:
-            resp = self.tdnem.process_exception(request, exception)
-        self.assertEqual(resp.status_code, 404)
