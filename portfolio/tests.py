@@ -3,10 +3,7 @@ from __future__ import unicode_literals
 
 from django.core.urlresolvers import reverse
 from django.template import Context, Template
-from django.shortcuts import render
 from django.test import TestCase
-from django.test import RequestFactory
-from django.template import TemplateDoesNotExist
 from django.contrib.admin.sites import AdminSite
 
 from portfolio.admin import ImageArtifactInline
@@ -16,7 +13,6 @@ from portfolio.factories import (CategoryFactory, FileArtifactFactory,
 from portfolio.models import (Category, FileArtifact, ImageArtifact, Project,
                               TextArtifact)
 from portfolio.templatetags.portfolio_tags import get_artifact_list
-from portfolio.middleware import TemplateDoesNotExistMiddleware
 
 
 class PortfolioTestCase(TestCase):
@@ -157,19 +153,15 @@ class PortfolioTemplateTagsTests(PortfolioTestCase):
         image_artifact = ImageArtifact.objects.get(slug='an-image')
         file_artifact = FileArtifact.objects.get(slug='a-file')
         text_artifact = TextArtifact.objects.get(slug='some-text')
-        artifact_list = get_artifact_list(Context({'project': project}))
+        artifact_list = get_artifact_list(project)
         self.assertEqual(len(artifact_list), 3)
-        artifact_list = get_artifact_list(Context({'project': project}),
-                                          artifact_type="image")
+        artifact_list = get_artifact_list(project, artifact_type="image")
         self.assertIn(image_artifact, artifact_list)
-        artifact_list = get_artifact_list(Context({'project': project}),
-                                          artifact_type="file")
+        artifact_list = get_artifact_list(project, artifact_type="file")
         self.assertIn(file_artifact, artifact_list)
-        artifact_list = get_artifact_list(Context({'project': project}),
-                                          artifact_type="text")
+        artifact_list = get_artifact_list(project, artifact_type="text")
         self.assertIn(text_artifact, artifact_list)
-        artifact_list = get_artifact_list(Context({'project': project}),
-                                          artifact_type="blob")
+        artifact_list = get_artifact_list(project, artifact_type="blob")
         self.assertEqual(len(artifact_list), 0)
 
     def test_convert_markdown(self):
