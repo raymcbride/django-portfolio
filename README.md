@@ -33,14 +33,24 @@ Include URLs in your project URLs:
         ...
     )
 
+Add the middleware in your MIDDLEWARE_CLASSES setting:
+
+    MIDDLEWARE_CLASSES = (
+        ...
+        'portfolio.middleware.TemplateDoesNotExistMiddleware',
+        ...
+    )
+
 ##Templates
 
-The following templates are required by django-portfolio, so you'll need to create them:
+The following templates are required by django-portfolio so you'll need to create them if you want to display the corresponding views. If you don't provide a specific template then the TemplateDoesNotExistMiddleware will return a 404:
 
+* portfolio/category_list.html - the template which renders the list of your categories
+* portfolio/category_detail.html - the template which renders a category detail
 * portfolio/project_list.html - the template which renders the list of your projects
-* portfolio/project_detail.html - the template which renders a specific project detail
+* portfolio/project_detail.html - the template which renders a project detail
 * portfolio/artifact_list.html - the template which renders the list of a project artifacts
-* portfolio/artifact_detail.html - the template which renders a specific artifact detail
+* portfolio/artifact_detail.html - the template which renders a artifact detail
 
 ##Template Tags and Filters
 
