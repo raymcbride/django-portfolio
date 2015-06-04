@@ -42,7 +42,7 @@ The following templates are required by django-portfolio so you'll need to creat
 * portfolio/project_list.html - the template which renders the list of your projects
 * portfolio/project_detail.html - the template which renders a project detail
 * portfolio/artifact_list.html - the template which renders the list of a project artifacts
-* portfolio/artifact_detail.html - the template which renders a artifact detail
+* portfolio/artifact_detail.html - the template which renders an artifact detail
 
 ##Template Tags and Filters
 
@@ -52,7 +52,7 @@ To use these helpers load portfolio_tags into your template:
 
 ###get_artifact_list
 
-This tag takes the context and an  artifact_type string and returns a list
+This tag takes the context and an artifact_type string and returns a list
 of published artifacts of that type for a specific project. The
 artifact_type string can be one of the follow:
 
