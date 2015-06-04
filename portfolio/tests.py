@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.template import Context, Template
 from django.test import TestCase
+from django.test import RequestFactory
+from django.http import Http404
 from django.contrib.admin.sites import AdminSite
 
 from portfolio.admin import ImageArtifactInline
@@ -13,6 +15,8 @@ from portfolio.factories import (CategoryFactory, FileArtifactFactory,
 from portfolio.models import (Category, FileArtifact, ImageArtifact, Project,
                               TextArtifact)
 from portfolio.templatetags.portfolio_tags import get_artifact_list
+from portfolio.views import (CategoryList, CategoryDetail, ProjectList,
+                             ProjectDetail, ArtifactList, ArtifactDetail)
 
 
 class PortfolioTestCase(TestCase):
@@ -62,6 +66,13 @@ class PortfolioViewsTests(PortfolioTestCase):
         url = reverse('category_list')
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
+        request = RequestFactory().get(url)
+        category_list = CategoryList(template_name='portfolio/foobar.html')
+        category_list.request = request
+        try:
+            category_list.dispatch(category_list.request)
+        except Exception as exception:
+            self.assertIsInstance(exception, Http404)
 
     def test_category_detail(self):
         category = Category.objects.get(slug='my-websites')
@@ -69,6 +80,13 @@ class PortfolioViewsTests(PortfolioTestCase):
                                                  category.slug})
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
+        request = RequestFactory().get(url)
+        category_detail = CategoryDetail(template_name='portfolio/foobar.html')
+        category_detail.request = request
+        try:
+            category_detail.dispatch(category_detail.request)
+        except Exception as exception:
+            self.assertIsInstance(exception, Http404)
         kwargs = {'category_slug': 'my-artwork'}
         url = reverse('category_detail', kwargs=kwargs)
         resp = self.client.get(url)
@@ -79,6 +97,13 @@ class PortfolioViewsTests(PortfolioTestCase):
         url = reverse('project_list', kwargs={'category_slug': category.slug})
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
+        request = RequestFactory().get(url)
+        project_list = ProjectList(template_name='portfolio/foobar.html')
+        project_list.request = request
+        try:
+            project_list.dispatch(project_list.request)
+        except Exception as exception:
+            self.assertIsInstance(exception, Http404)
         kwargs = {'category_slug': 'my-artwork'}
         url = reverse('project_list', kwargs=kwargs)
         resp = self.client.get(url)
@@ -91,6 +116,13 @@ class PortfolioViewsTests(PortfolioTestCase):
         url = reverse('project_detail', kwargs=kwargs)
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
+        request = RequestFactory().get(url)
+        project_detail = ProjectDetail(template_name='portfolio/foobar.html')
+        project_detail.request = request
+        try:
+            project_detail.dispatch(project_detail.request)
+        except Exception as exception:
+            self.assertIsInstance(exception, Http404)
         kwargs = {'category_slug': 'my-artwork', 'project_slug': project.slug}
         url = reverse('project_detail', kwargs=kwargs)
         resp = self.client.get(url)
@@ -107,6 +139,13 @@ class PortfolioViewsTests(PortfolioTestCase):
         url = reverse('artifact_list', kwargs=kwargs)
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
+        request = RequestFactory().get(url)
+        artifact_list = ArtifactList(template_name='portfolio/foobar.html')
+        artifact_list.request = request
+        try:
+            artifact_list.dispatch(artifact_list.request)
+        except Exception as exception:
+            self.assertIsInstance(exception, Http404)
         kwargs = {'category_slug': 'my-artwork', 'project_slug': project.slug}
         url = reverse('artifact_list', kwargs=kwargs)
         resp = self.client.get(url)
@@ -126,6 +165,13 @@ class PortfolioViewsTests(PortfolioTestCase):
                               'artifact_slug': image_artifact.slug})
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
+        request = RequestFactory().get(url)
+        artifact_detail = ArtifactDetail(template_name='portfolio/foobar.html')
+        artifact_detail.request = request
+        try:
+            artifact_detail.dispatch(artifact_detail.request)
+        except Exception as exception:
+            self.assertIsInstance(exception, Http404)
         kwargs = {'category_slug': 'my-artwork', 'project_slug': project.slug,
                   'artifact_slug': image_artifact.slug}
         url = reverse('artifact_detail', kwargs=kwargs)
