@@ -8,7 +8,6 @@
 .DS_Store
 .project
 .pydevproject
-.settings
 /*.egg
 /.eggs
 /.tox
