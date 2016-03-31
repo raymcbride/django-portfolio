@@ -22,5 +22,6 @@ tags
 pip-log.txt
 pip-selfcheck.json
 .coverage
+.coveralls.yml
 *~
 *.*~
