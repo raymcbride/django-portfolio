@@ -21,5 +21,6 @@ build
 tags
 pip-log.txt
 pip-selfcheck.json
-.coveralls.yml
 .coverage
+*~
+*.*~
